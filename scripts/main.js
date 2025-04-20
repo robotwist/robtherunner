@@ -8,7 +8,11 @@ const GROUND_HEIGHT = 40;
 const GRAVITY = 0.8;
 const JUMP_FORCE = 15;
 const OBSTACLE_SPEED = 5;
+const BASE_OBSTACLE_SPEED = 5; // Base speed for obstacles
+const MAX_SPEED_BOOST = 3; // Maximum speed boost from mashing A/B
 const SCORE_INCREMENT = 1;
+const SPEED_BOOST_DECAY = 0.05; // How quickly the speed boost decays
+const BOOST_WINDOW = 500; // Time window in ms to consider rapid keypresses
 
 // Player sprite constants
 const SPRITE_WIDTH = 24;  // Width of each sprite frame
@@ -79,6 +83,10 @@ let animationFrameId;
 let obstacleCounter = 0;
 let groundPos = 0;
 let obstacleFrequency = 70; // Higher number = less frequent
+let currentSpeed = BASE_OBSTACLE_SPEED; // Current game speed
+let speedBoost = 0; // Current speed boost from button mashing
+let lastABPress = 0; // Timestamp of last A or B press
+let abPressCount = 0; // Counter for rapid A/B presses
 
 // Asset loading variables
 let assetsLoaded = 0;
@@ -219,6 +227,10 @@ function startGame() {
     obstacleFrequency = 70; // Reset obstacle frequency
     gameActive = true;
     isPaused = false;
+    speedBoost = 0;
+    currentSpeed = BASE_OBSTACLE_SPEED;
+    abPressCount = 0;
+    lastABPress = 0;
     
     // Start game loop
     gameLoop();
@@ -255,10 +267,21 @@ function update() {
     checkCollisions();
     
     // Update score
-    score += SCORE_INCREMENT;
+    score += SCORE_INCREMENT * (1 + speedBoost/5); // Score increases with speed
     
-    // Update ground position for scrolling effect
-    groundPos = (groundPos - OBSTACLE_SPEED) % 64; // 64 is ground tile width
+    // Decay speed boost over time
+    if (speedBoost > 0) {
+        speedBoost = Math.max(0, speedBoost - SPEED_BOOST_DECAY);
+        updateCurrentSpeed();
+    }
+    
+    // Update ground position for scrolling effect - now uses currentSpeed
+    groundPos = (groundPos - currentSpeed) % 64; // 64 is ground tile width
+}
+
+// Function to update current game speed based on boost
+function updateCurrentSpeed() {
+    currentSpeed = BASE_OBSTACLE_SPEED + speedBoost;
 }
 
 // Update player position and state
@@ -481,7 +504,7 @@ function generateObstacles() {
 // Update obstacles position
 function updateObstacles() {
     for (let i = 0; i < obstacles.length; i++) {
-        obstacles[i].x -= OBSTACLE_SPEED;
+        obstacles[i].x -= currentSpeed; // Use current speed with boost
         
         // Remove obstacles that have moved off screen
         if (obstacles[i].x + obstacles[i].width < 0) {
@@ -562,6 +585,12 @@ function render() {
     ctx.font = '16px "Press Start 2P"';
     ctx.textAlign = 'left';
     ctx.fillText(`SCORE: ${Math.floor(score)}`, 20, 30);
+    
+    // Draw speed boost indicator when active
+    if (speedBoost > 0) {
+        ctx.fillStyle = '#FFFF00';
+        ctx.fillText(`SPEED: ${Math.floor(speedBoost * 100 / MAX_SPEED_BOOST)}%`, 20, 60);
+    }
 }
 
 // Draw player sprite with green background handling
@@ -660,6 +689,38 @@ function setupControls() {
             if (!player.isJumping && gameActive && !isPaused) {
                 player.velocityY = -JUMP_FORCE;
                 setAnimation('jumping');
+            }
+        } else if (e.code === 'KeyA' || e.code === 'KeyB') {
+            // Handle A/B button mashing for speed boost
+            if (gameActive && !isPaused) {
+                const now = Date.now();
+                
+                // Check if this is a rapid press (within time window)
+                if (now - lastABPress < BOOST_WINDOW) {
+                    abPressCount++;
+                    
+                    // Calculate boost based on press count, with a cap
+                    speedBoost = Math.min(MAX_SPEED_BOOST, abPressCount / 5);
+                    updateCurrentSpeed();
+                    
+                    // Visual feedback for speed boost
+                    if (speedBoost > MAX_SPEED_BOOST * 0.7) {
+                        // Show "flex" animation briefly if at high speed and not jumping
+                        if (!player.isJumping && player.animationState === 'running') {
+                            setAnimation('flex');
+                            setTimeout(() => {
+                                if (player.animationState === 'flex') {
+                                    setAnimation('running');
+                                }
+                            }, 300);
+                        }
+                    }
+                } else {
+                    // Reset counter if too slow
+                    abPressCount = 1;
+                }
+                
+                lastABPress = now;
             }
         } else if (e.code === 'KeyP') {
             // Toggle pause
