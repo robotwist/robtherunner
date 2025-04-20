@@ -1,0 +1,28 @@
+# Game Assets Placeholder
+
+For a complete game experience, you'll need to create or source the following pixel art assets:
+
+1. player.png - A spritesheet with running and jumping animations for the character
+   - Size: 160x120px (4 frames of 40x60px for running, 4 frames for jumping)
+   - Format: PNG with transparency
+
+2. obstacle.png - Obstacle sprite
+   - Size: 30x30px
+   - Format: PNG with transparency
+
+3. ground.png - Repeatable ground tile
+   - Size: 64x40px
+   - Format: PNG with transparency
+
+4. background.png - Game background
+   - Size: 640x360px
+   - Format: PNG
+
+You can replace these assets with your own pixel art designs while maintaining the same dimensions to ensure proper game functionality.
+
+For a quick start, you can create simple colored rectangles as placeholders with the following:
+
+- player.png: Blue rectangle
+- obstacle.png: Red rectangle
+- ground.png: Brown rectangle with top edge detail
+- background.png: Simple gradient or pattern 

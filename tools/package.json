@@ -1,0 +1,13 @@
+{
+  "name": "rob-the-runner-tools",
+  "version": "1.0.0",
+  "description": "Asset generation tools for Rob The Runner game",
+  "private": true,
+  "scripts": {
+    "generate-assets": "node pixel_art_generator.js",
+    "generate-animations": "node sprite_animator.js"
+  },
+  "dependencies": {
+    "canvas": "^2.11.0"
+  }
+} 

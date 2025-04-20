@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="A life simulator game inspired by classic NES Track & Field, following Rob from childhood to adulthood and beyond in an epic running career.">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Rob the Runner - Track & Field Game</title>
+  <!-- Add favicon link to prevent 404 error -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏃‍♂️</text></svg>">
+  <!-- Fonts - Press Start 2P for pixelated text -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="game-title">Rob the Runner</h1>
+      <h2 class="game-subtitle">Run for your life your whole life.</h2>
+    </header>
+    
+    <div class="game-wrapper">
+      <!-- Loading Screen -->
+      <div class="loading-screen">
+        <h2>Loading...</h2>
+        <div class="loading-bar-container">
+          <div class="loading-bar"></div>
+        </div>
+        <p class="loading-text" id="loadingText">Loading assets... 0%</p>
+      </div>
+      
+      <!-- Game Canvas -->
+      <canvas id="game-canvas"></canvas>
+      
+      <!-- Game State Screens -->
+      <div class="game-state-screens">
+        <div class="game-over-screen">
+          <h2>GAME OVER</h2>
+          <div class="final-score">SCORE: 0</div>
+          <button class="restart-button">RESTART</button>
+        </div>
+        
+        <div class="pause-screen">
+          <h2>PAUSED</h2>
+          <button class="restart-button">RESUME</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile-Friendly Game Instructions -->
+    <div class="game-instructions">
+      <p>TAP/SPACE to JUMP</p>
+      <p>TAP RAPIDLY to RUN FASTER!</p>
+      <p>P to PAUSE</p>
+    </div>
+
+    <!-- Direct Start Button -->
+    <button id="directStartButton" style="background-color: #ff0000; color: white; padding: 10px 20px; margin: 10px auto; display: block; font-family: 'Press Start 2P', cursive; border: none; cursor: pointer;">START GAME DIRECTLY</button>
+    
+    <footer>
+      <p>&copy; 2025 Run Runner Games</p>
+    </footer>
+  </div>
+  
+  <!-- Intro Sequence -->
+  <div class="intro-sequence" id="introSequence" style="display: none;">
+    <canvas id="introCanvas"></canvas>
+    <div class="press-start" id="pressStart">TAP TO START</div>
+  </div>
+  
+  <script src="scripts/main.js"></script>
+  <script src="scripts/remove-bg.js"></script>
+  <script>
+    // Direct start game button
+    document.getElementById('directStartButton').addEventListener('click', function() {
+      // Skip intro and start directly
+      if (window.game) {
+        window.game.introPlayed = true;
+        window.game.started = true;
+      }
+      
+      // Hide intro if visible
+      const introElement = document.getElementById('introSequence');
+      if (introElement) {
+        introElement.style.display = 'none';
+      }
+      
+      // Hide loading screens
+      const loadingScreens = document.querySelectorAll('.loading-screen');
+      loadingScreens.forEach(screen => {
+        screen.style.display = 'none';
+      });
+      
+      // Start game directly
+      if (window.startGame) {
+        window.startGame();
+      } else {
+        console.error("startGame function not found");
+        alert("Game function not loaded yet. Please wait a moment and try again.");
+      }
+    });
+  </script>
+</body>
+</html>
