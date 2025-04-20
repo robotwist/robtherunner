@@ -1,4 +1,4 @@
-/* NES-Inspired Runner Game Stylesheet - Modernized */
+/* NES-Inspired Runner Game Stylesheet */
 :root {
   --nes-black: #0f0f0f;
   --nes-dark-gray: #383838;
@@ -16,15 +16,6 @@
   --secondary-color: var(--nes-blue);
 }
 
-/* Import modern game font */
-@font-face {
-  font-family: 'Press Start 2P';
-  src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -32,13 +23,12 @@
 }
 
 body {
-  font-family: 'Press Start 2P', 'Courier New', monospace;
-  background-color: #000;
-  color: #fff;
+  font-family: 'Press Start 2P', cursive;
+  background-color: var(--nes-black);
+  color: var(--nes-white);
   line-height: 1.6;
   overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+  image-rendering: pixelated;
 }
 
 .container {
@@ -49,25 +39,11 @@ body {
 }
 
 .game-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 1rem 0 0.5rem;
+  font-size: 2rem;
+  margin: 1rem 0;
   color: var(--nes-yellow);
+  text-shadow: 3px 3px 0 var(--nes-dark-gray);
   letter-spacing: 2px;
-  text-transform: uppercase;
-  line-height: 1.2;
-  position: relative;
-  z-index: 2;
-}
-
-.game-subtitle {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--nes-white);
-  margin-bottom: 2rem;
-  letter-spacing: 1px;
-  position: relative;
-  z-index: 1;
 }
 
 .game-wrapper {
@@ -85,242 +61,156 @@ body {
   border: 4px solid var(--nes-white);
   width: 100%;
   height: 360px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 /* Loading Screen */
 .loading-screen {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000;
+  background-color: var(--nes-black);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 100;
-  background: radial-gradient(circle at center, #222 0%, #000 70%);
 }
 
 .loading-screen h2 {
   color: var(--nes-white);
   margin-bottom: 2rem;
-  font-family: 'Press Start 2P', cursive;
-  position: relative;
 }
 
 .loading-bar-container {
   width: 80%;
-  max-width: 400px;
   height: 20px;
-  background-color: #222;
-  border: 2px solid #fff;
-  border-radius: 10px;
-  margin-top: 20px;
-  position: relative;
-  overflow: hidden;
+  background-color: var(--nes-dark-gray);
+  border: 2px solid var(--nes-white);
 }
 
 .loading-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(to right, #0cf, #0ff);
-  border-radius: 8px;
+  background-color: var(--nes-green);
   transition: width 0.5s;
-  position: relative;
-}
-
-.loading-text {
-  font-size: 1.2rem;
-  color: #fff;
-  margin-top: 10px;
 }
 
 /* NES Controller */
 .nes-controller {
   display: flex;
-  flex-direction: column;
+  justify-content: space-around;
   align-items: center;
-  margin-top: 20px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: var(--nes-dark-gray);
+  border-radius: 8px;
+  border: 4px solid var(--nes-light-gray);
+  max-width: 480px;
 }
 
-.controller-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 10px;
+.dpad {
+  position: relative;
+  width: 120px;
+  height: 120px;
 }
 
-.nes-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+.dpad button {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: var(--nes-black);
+  color: var(--nes-light-gray);
+  border: 2px solid var(--nes-light-gray);
+  font-size: 1.5rem;
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 24px;
+  align-items: center;
   cursor: pointer;
-  user-select: none;
-  transition: all 0.1s ease;
+}
+
+.btn-up {
+  top: 0;
+  left: 40px;
+  border-radius: 5px 5px 0 0;
+}
+
+.btn-down {
+  bottom: 0;
+  left: 40px;
+  border-radius: 0 0 5px 5px;
+}
+
+.btn-left {
+  top: 40px;
+  left: 0;
+  border-radius: 5px 0 0 5px;
+}
+
+.btn-right {
+  top: 40px;
+  right: 0;
+  border-radius: 0 5px 5px 0;
+}
+
+.dpad-center {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--nes-black);
+  border: 2px solid var(--nes-light-gray);
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .btn-a, .btn-b {
-  background: #ff0000;
-  color: white;
-  border: 4px solid #800000;
-  box-shadow: 0 4px 0 #800000;
-}
-
-.start-btn, .select-btn {
-  background: #333;
-  color: white;
-  font-size: 14px;
-  width: 80px;
-  height: 40px;
-  border-radius: 10px;
-  border: 4px solid #111;
-  box-shadow: 0 4px 0 #111;
-}
-
-.nes-btn.pressed {
-  transform: translateY(4px);
-  box-shadow: 0 0 0 #800000;
-}
-
-.start-btn.pressed, .select-btn.pressed {
-  box-shadow: 0 0 0 #111;
-}
-
-/* Game instructions with button mashing info */
-.game-instructions {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 12px;
-  text-align: center;
-  margin: 15px 0;
-  line-height: 1.5;
-}
-
-/* Mobile Optimization */
-@media (max-width: 600px) {
-  .game-title {
-    font-size: 1.8rem;
-  }
-  
-  .game-subtitle {
-    font-size: 0.9rem;
-  }
-  
-  .game-instructions {
-    font-size: 10px;
-  }
-  
-  #game-canvas {
-    height: auto;
-    aspect-ratio: 16/9;
-  }
-  
-  .nes-controller {
-    transform: scale(0.8);
-  }
-  
-  .loading-text {
-    font-size: 1rem;
-  }
-  
-  .loading-bar-container {
-    height: 15px;
-  }
-}
-
-/* Remove CRT overlay completely */
-.crt-overlay {
-  display: none;
-}
-
-/* Dialogue box for story events */
-.dialogue-box {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 600px;
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 4px solid #fff;
-  padding: 20px;
-  z-index: 1000;
-  font-family: 'Press Start 2P', cursive;
-  color: white;
-}
-
-.dialogue-speaker {
-  color: #00ff00;
-  margin-bottom: 10px;
-  font-size: 16px;
-}
-
-.dialogue-text {
-  font-size: 14px;
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
-
-.dialogue-prompt {
-  font-size: 12px;
-  color: #ffff00;
-  text-align: right;
-  animation: blink 1s infinite;
-}
-
-/* Coming soon message */
-.coming-soon-message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 600px;
-  background-color: rgba(0, 0, 0, 0.9);
-  border: 4px solid #ff0000;
-  padding: 30px;
-  z-index: 1100;
-  font-family: 'Press Start 2P', cursive;
-  color: white;
-  text-align: center;
-}
-
-.coming-soon-message h2 {
-  color: #ff0000;
-  margin-bottom: 20px;
-  font-size: 20px;
-}
-
-.coming-soon-message p {
-  margin-bottom: 30px;
-  line-height: 1.5;
-  font-size: 14px;
-}
-
-.restart-button {
-  background: #ff0000;
-  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--nes-red);
+  color: var(--nes-white);
   border: none;
-  padding: 10px 20px;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
 }
 
-.restart-button:hover {
-  background: #cc0000;
+.btn-a:active, .btn-b:active {
+  transform: translateY(4px);
+  box-shadow: none;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+.center-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.select-btn, .start-btn {
+  padding: 5px 10px;
+  background-color: var(--nes-black);
+  color: var(--nes-light-gray);
+  border: 2px solid var(--nes-light-gray);
+  border-radius: 5px;
+  font-size: 0.6rem;
+  cursor: pointer;
+}
+
+/* Game instructions */
+.game-instructions {
+  margin: 1rem 0;
+  font-size: 0.7rem;
+  color: var(--nes-light-gray);
 }
 
 /* Game state screens */
@@ -352,50 +242,25 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Projector flicker animation */
-@keyframes projector-flicker {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 0.65; }
-  25%, 75% { opacity: 0.72; }
-  30%, 80% { opacity: 0.68; }
-  32%, 23%, 78% { opacity: 0.65; }
-  40%, 60% { opacity: 0.7; }
-}
-
-/* Loading shine animation */
-@keyframes loading-shine {
-  0% { background-position: -100% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* Intro sequence animation */
-.intro-sequence {
+/* CRT effect */
+.crt-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: #000;
-  z-index: 90;
-  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.15;
 }
 
-.intro-sequence canvas {
-  border: 4px solid #fff;
-  box-shadow: 0 0 20px rgba(0, 120, 248, 0.7);
-}
-
-.press-start {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 1.5rem;
-  color: #fff;
-  margin-top: 2rem;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
-  animation: press-start-flash 1.5s infinite;
+/* Game subtitle */
+.game-subtitle {
+  color: var(--nes-green);
+  font-size: 1rem;
+  margin-bottom: 20px;
 }
 
 /* Footer */
@@ -404,6 +269,27 @@ footer {
   font-size: 0.6rem;
   color: var(--nes-light-gray);
   padding: 10px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 600px) {
+  .game-title {
+    font-size: 1.8rem;
+  }
+  
+  .game-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .nes-controller {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  #game-canvas {
+    height: 300px;
+  }
 }
 
 /* Game State Screens */
@@ -421,70 +307,17 @@ footer {
   text-shadow: 2px 2px 0 var(--nes-dark-gray);
 }
 
+.restart-button {
+  padding: 10px 20px;
+  background-color: var(--nes-blue);
+  color: var(--nes-white);
+  border: none;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
 .restart-button:hover {
   background-color: var(--nes-green);
-}
-
-/* Additional animation for title */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-header {
-  position: relative;
-  margin-bottom: 2rem;
-  animation: pulse 5s infinite ease-in-out;
-}
-
-/* Animation Keyframes */
-@keyframes text-flicker {
-  0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(255, 255, 255, 0.7); }
-  50% { opacity: 0.8; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
-}
-
-@keyframes press-start-flash {
-  0%, 100% { opacity: 1; text-shadow: 0 0 10px #0ff, 0 0 20px #0ff; }
-  50% { opacity: 0.3; text-shadow: 0 0 5px #0ff, 0 0 10px #0ff; }
-}
-
-/* Add the cloudy filter effect for initial screens */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  z-index: 10;
-  pointer-events: none;
-  backdrop-filter: blur(2px);
-  transition: opacity 1s ease-out, backdrop-filter 1s ease-out;
-}
-
-/* Special class to remove the cloudy effect */
-body.gameplay-started::before {
-  opacity: 0;
-  backdrop-filter: blur(0);
-}
-
-/* Screen flicker animation for intro transition */
-@keyframes flicker-effect {
-  0% { filter: brightness(1); }
-  10% { filter: brightness(0.5); }
-  15% { filter: brightness(1.5); }
-  20% { filter: brightness(0.1); }
-  25% { filter: brightness(1.2); }
-  30% { filter: brightness(0.8); }
-  40% { filter: brightness(1.5); }
-  45% { filter: brightness(0.2); }
-  50% { filter: brightness(1.3); }
-  55% { filter: brightness(0.5); }
-  60% { filter: brightness(1.7); }
-  70% { filter: brightness(0.3); }
-  80% { filter: brightness(1.5); }
-  90% { filter: brightness(0.8); }
-  100% { filter: brightness(1.2); }
 } 

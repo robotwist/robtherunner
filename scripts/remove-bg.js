@@ -5,14 +5,14 @@ window.addEventListener('load', function() {
     // Wait until the game has fully loaded
     setTimeout(function() {
         processPlayerSprite();
-    }, 500); // Reduced from 1000ms to 500ms
+    }, 1000);
 });
 
 function processPlayerSprite() {
     // Access the sprites from the global window object
     if (!window.sprites || !window.sprites.player || !window.sprites.player.complete) {
-        console.log('Player sprite not ready, trying again in 500ms');
-        setTimeout(processPlayerSprite, 500); // Reduced from 1000ms to 500ms
+        console.log('Player sprite not ready, trying again in 1 second');
+        setTimeout(processPlayerSprite, 1000);
         return;
     }
     
@@ -31,17 +31,29 @@ function processPlayerSprite() {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
     
-    // Loop through all pixels with optimized detection
+    // Loop through all pixels
     for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
-
-        // Combined optimized green detection - faster than multiple checks
-        if ((g > r * 1.2 && g > b * 1.2) ||                           // Basic green detection
-            (g > 200 && r < 180 && b < 180) ||                        // Bright green
-            (Math.abs(r - 144) < 30 && Math.abs(g - 238) < 30 && Math.abs(b - 144) < 30)) { // Specific sprite color
-            data[i + 3] = 0; // Set alpha to transparent
+        
+        // Detect the background color - look for all shades of green
+        // This handles everything from pure green to mint/lime green
+        if (
+            // Standard green detection
+            (g > r * 1.2 && g > b * 1.2) || 
+            // Light green / mint green
+            (g > 150 && r < 150 && b < 150) ||
+            (r < 200 && g > 200 && b < 200) ||
+            // Specific mint green range
+            (r > 150 && r < 220 && g > 220 && b > 150 && b < 220) ||
+            // Very light green (almost white with green tint)
+            (r > 200 && g > 230 && b > 200 && g > r && g > b) ||
+            // Check for specific color used in this sprite (if known)
+            (r === 144 && g === 238 && b === 144) // Light green
+        ) {
+            // Make it transparent
+            data[i + 3] = 0;
         }
     }
     
@@ -54,11 +66,6 @@ function processPlayerSprite() {
         // Replace the original sprite with the transparent version
         window.sprites.player = transparentSprite;
         console.log('Sprite background removed successfully');
-        
-        // Force a redraw to show the transparent sprite
-        if (window.gameActive) {
-            window.render();
-        }
     };
     transparentSprite.src = canvas.toDataURL('image/png');
     
