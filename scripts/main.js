@@ -14,6 +14,19 @@ const SCORE_INCREMENT = 1;
 const SPEED_BOOST_DECAY = 0.05; // How quickly the speed boost decays
 const BOOST_WINDOW = 500; // Time window in ms to consider rapid keypresses
 
+// Expose constants to global scope for other scripts
+window.GAME_WIDTH = GAME_WIDTH;
+window.GAME_HEIGHT = GAME_HEIGHT;
+window.GROUND_HEIGHT = GROUND_HEIGHT;
+window.GRAVITY = GRAVITY;
+window.JUMP_FORCE = JUMP_FORCE;
+window.OBSTACLE_SPEED = OBSTACLE_SPEED;
+window.BASE_OBSTACLE_SPEED = BASE_OBSTACLE_SPEED;
+window.MAX_SPEED_BOOST = MAX_SPEED_BOOST;
+window.SCORE_INCREMENT = SCORE_INCREMENT;
+window.SPEED_BOOST_DECAY = SPEED_BOOST_DECAY;
+window.BOOST_WINDOW = BOOST_WINDOW;
+
 // Player sprite constants
 const SPRITE_WIDTH = 24;  // Width of each sprite frame
 const SPRITE_HEIGHT = 38; // Adjusted height based on user feedback
@@ -87,11 +100,19 @@ let currentSpeed = BASE_OBSTACLE_SPEED; // Current game speed
 let speedBoost = 0; // Current speed boost from button mashing
 let lastABPress = 0; // Timestamp of last A or B press
 let abPressCount = 0; // Counter for rapid A/B presses
+let lastTime = 0; // For delta time calculation
 
 // Asset loading variables
 let assetsLoaded = 0;
 const TOTAL_ASSETS = 4;
 let sprites = {};
+
+// Expose sprite constants to global scope for other scripts
+window.SPRITE_WIDTH = SPRITE_WIDTH;
+window.SPRITE_HEIGHT = SPRITE_HEIGHT;
+window.ROW_POSITIONS = ROW_POSITIONS;
+window.ROW_HEIGHTS = ROW_HEIGHTS;
+window.ANIMATION = ANIMATION;
 
 // Game initialization
 window.onload = function() {
@@ -114,6 +135,9 @@ window.onload = function() {
     
     // Set up touch controls for mobile
     setupTouchControls();
+    
+    // Initialize game mode
+    window.gameMode = 'endless'; // Default mode
 };
 
 // Asset loading
@@ -236,20 +260,33 @@ function startGame() {
     gameLoop();
 }
 
-// Main game loop
+// Game loop
 function gameLoop() {
-    // Clear the canvas
-    ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    // Calculate delta time for frame rate independence
+    const now = Date.now();
+    const deltaTime = (now - lastTime) / 1000; // Convert to seconds
+    lastTime = now;
     
-    if (!isPaused) {
-        update();
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Handle game states
+    if (gameActive && !isPaused) {
+        if (window.gameMode === 'endless') {
+            // Endless runner mode
+            update();
+        } else if (window.gameMode === 'race') {
+            // Race mode
+            update();
+            window.updateRace(deltaTime);
+        }
     }
     
+    // Render game
     render();
     
-    if (gameActive) {
-        animationFrameId = requestAnimationFrame(gameLoop);
-    }
+    // Continue the game loop
+    animationFrameId = requestAnimationFrame(gameLoop);
 }
 
 // Update game state
@@ -257,8 +294,10 @@ function update() {
     // Update player
     updatePlayer();
     
-    // Generate obstacles
-    generateObstacles();
+    // Generate obstacles (only in endless mode or for races with obstacles)
+    if (window.gameMode === 'endless' || (window.gameMode === 'race' && window.raceState && window.raceState.config.obstacles)) {
+        generateObstacles();
+    }
     
     // Update obstacles
     updateObstacles();
@@ -271,7 +310,10 @@ function update() {
     
     // Decay speed boost over time
     if (speedBoost > 0) {
-        speedBoost = Math.max(0, speedBoost - SPEED_BOOST_DECAY);
+        const decayRate = window.gameMode === 'race' && window.raceState ? 
+            window.raceState.config.mash_decay : SPEED_BOOST_DECAY;
+            
+        speedBoost = Math.max(0, speedBoost - decayRate);
         updateCurrentSpeed();
     }
     
@@ -544,17 +586,15 @@ function checkCollisions() {
 function gameOver() {
     gameActive = false;
     
-    // Play crying animation
-    setAnimation('crying');
+    // Show game over message
+    document.querySelector('.game-over-screen').style.display = 'flex';
     
-    // Display game over screen
-    const gameOverScreen = document.querySelector('.game-over-screen');
-    gameOverScreen.style.display = 'block';
+    if (window.gameMode === 'endless') {
+        // Update final score display
+        document.querySelector('.final-score').textContent = `SCORE: ${Math.floor(score)}`;
+    }
     
-    // Update final score
-    document.querySelector('.final-score').textContent = `SCORE: ${Math.floor(score)}`;
-    
-    // Stop animation
+    // Stop the game loop
     cancelAnimationFrame(animationFrameId);
 }
 
@@ -580,16 +620,18 @@ function render() {
         );
     }
     
-    // Draw score
-    ctx.fillStyle = '#FCFCFC';
-    ctx.font = '16px "Press Start 2P"';
-    ctx.textAlign = 'left';
-    ctx.fillText(`SCORE: ${Math.floor(score)}`, 20, 30);
-    
-    // Draw speed boost indicator when active
-    if (speedBoost > 0) {
-        ctx.fillStyle = '#FFFF00';
-        ctx.fillText(`SPEED: ${Math.floor(speedBoost * 100 / MAX_SPEED_BOOST)}%`, 20, 60);
+    // Draw score - only in endless mode
+    if (window.gameMode === 'endless') {
+        ctx.fillStyle = '#FCFCFC';
+        ctx.font = '16px "Press Start 2P"';
+        ctx.textAlign = 'left';
+        ctx.fillText(`SCORE: ${Math.floor(score)}`, 20, 30);
+        
+        // Draw speed boost indicator when active
+        if (speedBoost > 0) {
+            ctx.fillStyle = '#FFFF00';
+            ctx.fillText(`SPEED: ${Math.floor(speedBoost * 100 / MAX_SPEED_BOOST)}%`, 20, 60);
+        }
     }
 }
 
@@ -924,16 +966,18 @@ function setupTouchControls() {
 // Toggle pause state
 function togglePause() {
     isPaused = !isPaused;
-    const pauseScreen = document.querySelector('.pause-screen');
-    pauseScreen.style.display = isPaused ? 'block' : 'none';
     
-    // Show head scratch animation when paused
     if (isPaused) {
-        setAnimation('headScratch');
+        // Show pause screen
+        document.querySelector('.pause-screen').style.display = 'flex';
     } else {
-        setAnimation('running');
+        // Hide pause screen
+        document.querySelector('.pause-screen').style.display = 'none';
     }
 }
+
+// Make togglePause available globally
+window.togglePause = togglePause;
 
 // Restart the game
 function restartGame() {

@@ -19,6 +19,61 @@
       <h1 class="game-title">Rob the Runner</h1>
     </header>
     
+    <!-- Main Menu -->
+    <div class="menu-screen main-menu">
+      <div class="menu-title">Select Mode</div>
+      <div class="menu-options">
+        <div class="menu-option selected" data-option="career">Career Mode</div>
+        <div class="menu-option" data-option="endless">Endless Runner</div>
+        <div class="menu-option" data-option="controls">Controls</div>
+      </div>
+      <div class="menu-instructions">
+        UP/DOWN: Select | ENTER: Confirm
+      </div>
+    </div>
+    
+    <!-- Career Mode Race Selection -->
+    <div class="menu-screen race-selection" style="display: none;">
+      <div class="menu-title">Select Event</div>
+      <div class="menu-options">
+        <div class="menu-option selected" data-race="sprint">
+          <span class="race-name">100m Sprint</span>
+          <span class="race-desc">Fast-paced dash to the finish</span>
+        </div>
+        <div class="menu-option" data-race="mile">
+          <span class="race-name">Mile Race</span>
+          <span class="race-desc">Test your endurance and pacing</span>
+        </div>
+        <div class="menu-option" data-race="country">
+          <span class="race-name">Cross Country</span>
+          <span class="race-desc">Navigate difficult terrain</span>
+        </div>
+        <div class="menu-option" data-race="back">
+          <span class="race-name">Back to Menu</span>
+        </div>
+      </div>
+      <div class="career-stats">
+        <div class="stat-item">Age: <span id="player-age">16</span></div>
+        <div class="stat-item">Season: <span id="current-season">Spring 2023</span></div>
+        <div class="stat-item">Meet: <span id="current-meet">Home Meet</span></div>
+        <div class="stat-item">Speed: <span id="player-speed">5</span>/10</div>
+        <div class="stat-item">Endurance: <span id="player-endurance">3</span>/10</div>
+      </div>
+    </div>
+    
+    <!-- Controls Help Screen -->
+    <div class="menu-screen controls-help" style="display: none;">
+      <div class="menu-title">Controls</div>
+      <div class="controls-info">
+        <p>SPACE/UP: Jump</p>
+        <p>A/B: Mash to run faster</p>
+        <p>P: Pause game</p>
+        <p>ESC: Return to menu</p>
+        <p>ENTER: Confirm selection</p>
+      </div>
+      <div class="menu-option back-button" data-option="back">Back to Menu</div>
+    </div>
+    
     <div class="game-wrapper">
       <!-- Loading Screen -->
       <div class="loading-screen">
@@ -31,24 +86,43 @@
       <!-- Game Canvas -->
       <canvas id="game-canvas"></canvas>
       
+      <!-- Race Info Display -->
+      <div class="race-info" style="display: none;">
+        <div class="race-progress-container">
+          <div class="race-progress-bar"></div>
+        </div>
+        <div class="race-stats">
+          <div class="race-time">Time: <span id="race-time">00:00.00</span></div>
+          <div class="race-distance">Distance: <span id="race-distance">0</span>m</div>
+          <div class="race-position">Position: <span id="race-position">1st</span></div>
+        </div>
+      </div>
+      
       <!-- Game State Screens -->
       <div class="game-state-screens">
         <div class="game-over-screen">
-          <h2>GAME OVER</h2>
-          <div class="final-score">SCORE: 0</div>
-          <button class="restart-button">RESTART</button>
+          <h2>RACE COMPLETE</h2>
+          <div class="race-meet"><span id="meet-name">Home Meet</span></div>
+          <div class="race-results">
+            <div class="final-time">Time: <span id="final-time">00:00.00</span></div>
+            <div class="final-position">Position: <span id="final-position">1st</span></div>
+            <div class="final-score">Score: <span id="final-score">0</span></div>
+            <div class="new-record" style="display: none;">NEW RECORD!</div>
+          </div>
+          <button class="restart-button">CONTINUE</button>
         </div>
         
         <div class="pause-screen">
           <h2>PAUSED</h2>
-          <button class="restart-button">RESUME</button>
+          <button class="resume-button">RESUME</button>
+          <button class="menu-button">MAIN MENU</button>
         </div>
       </div>
     </div>
     
     <!-- Game Instructions -->
     <div class="game-instructions">
-      <p>Press SPACE to jump | Press P to pause</p>
+      <p>Press SPACE to jump | Press P to pause | Mash A/B to run faster</p>
     </div>
     
     <!-- NES Controller -->
@@ -85,6 +159,8 @@
   
   <script src="scripts/main.js"></script>
   <script src="scripts/remove-bg.js"></script>
-  <script src="scripts/generate-assets.js"></script>
+  <script src="scripts/career.js"></script>
+  <script src="scripts/races.js"></script>
+  <script src="scripts/menus.js"></script>
 </body>
 </html>

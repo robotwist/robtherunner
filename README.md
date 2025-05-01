@@ -106,8 +106,8 @@ http://localhost:8000
 
 ## Credits
 
-- Game Design & Development: [Your Name]
-- Sprite Art: Custom pixel art designed in NES-style limitations
+- Game Design & Development: [R Wis]
+- Sprite Art: Custom pixel art designed in early gaming limitations
 - Font: "Press Start 2P" (Google Fonts)
 
 ## License
